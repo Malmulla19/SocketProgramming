@@ -1,7 +1,7 @@
 # SocketProgramming
 This project illustrates the idea of socket programming via simple library management app
 # Done By #
-# Mahdi Abbas #
+Mahdi Abbas AlMulla
 # Server.py #
 Run Server.py script first.
 This script is designed to work on localhost, at port 4999, if you have any application running on that port, close it first, or change the port number for this script.
