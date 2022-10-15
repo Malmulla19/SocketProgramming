@@ -6,12 +6,10 @@ Course Project.
 Done By:
 -Mahdi Abbas Mulla Ali
 '''
-
 import socket
 import pickle
 #Creating a socket for client.
-client = socket.socket()
-#No need to bind anything.
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Server's address: currently, client and server will both be working on the same machine.
 address =("localhost", 4999)
 #Connecting to the server
@@ -19,19 +17,32 @@ client.connect(address)
 #Greeting message from server"
 print(client.recv(1204).decode('ascii'))
 print("*****************************")
-#Login Function, first thing to be excuted.
-while True:
-    usern = input("Enter your username: ")
-    passw = input("Enter your password: ")
-    client.send(usern.encode('ascii'))
-    client.send(passw.encode("ascii"))
-    access = client.recv(1024).decode('ascii')
-    print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-    if access == "Welcome":
-        print("Welcome ", usern)
-        break
-    else:
-        print(access)
+#Login Function, first thing to be executed.
+def login():
+    print("============================================")
+    print("Login to your account.")
+    print("============================================")
+    while True:
+        username = input("Username: ")
+        password = input("Password: ")
+        client.send(username.encode('ascii'))
+        client.send(password.encode('ascii'))
+        result = client.recv(1024).decode('ascii')
+        if result == "True":
+            print("Login successful!")
+            print("============================================")
+            main()
+            break
+        elif result == "False":
+            print("Wrong username or password, please try again.")
+            print("============================================")
+            login()
+            break
+        else:
+            print("Wrong input, please try again.")
+            print("============================================")
+            login()
+            break
 #Searching for a book based on book title, author name, or original year of publication.
 def search():
     client.send("SEARCH".encode('ascii'))
@@ -240,7 +251,7 @@ def main():
     else:
         print("Wrong input, please enter a valid option.")
         main()
-main()
+login()
 #Sending the message to the client.
 print("<<<---Client is Closing--->>>")
 client.send('Q'.encode('ascii'))

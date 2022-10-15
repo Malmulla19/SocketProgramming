@@ -6,7 +6,6 @@ Course Project.
 Done By:
 -Mahdi Abbas Mulla Ali
 '''
-
 import socket
 import threading
 import csv
@@ -15,31 +14,47 @@ import re
 import pickle
 
 #By Default it will run on IPv4 and TCP
-server = socket.socket()
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #IP & port number
 IP, PORT = "localhost", 4999
 #Binding the server with th address
 server.bind((IP,PORT))
 # Class: Creating a cart object for each client.
 class Cart:
-    #Like the difault constructor.
-    def __init__(self, givenSock):
-        self.sock=givenSock
-        self.cart = []
-        #Add book method.
-    def addBook(self, book):
-        self.cart.append(book)
-        #Add
-    def sendCart(self):
+    def __init__(self, sock):
+        self.sock = sock
+        self.cart = {}
+        self.total = 0
+        self.counter = 0
+
+    def add(self, id):
+        with open('books - 20211.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            for i in reader:
+                if int(i["ï»¿book_id"]) == id:
+                    self.cart[self.counter] = i
+                    self.counter += 1
+                    self.total += float(i["price_bd"])
+
+    def remove(self, id):
+        with open('books - 20211.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            for i in reader:
+                if int(i["ï»¿book_id"]) == id:
+                    for x in self.cart:
+                        if self.cart[x]["ï»¿book_id"] == i["ï»¿book_id"]:
+                            self.total -= float(i["price_bd"])
+                            self.cart.pop(x)
+                            break
+
+    def getCart(self):
         return self.cart
-    def rmvBook(self,id):
-        print(self.cart)
-        for i in self.cart:
-            for x, z in i.items():
-                for k, y in z.items():
-                    if y == id:
-                        self.cart.remove(i)
-        print(self.cart)
+
+    def getTotal(self):
+        return self.total
+
+    def getCounter(self):
+        return self.counter
 #Removing ordered items
 fnames = ["ï»¿book_id","books_count","isbn","authors","original_publication_year","title",
           "language_code","price_bd","average_rating","ratings_count"]
